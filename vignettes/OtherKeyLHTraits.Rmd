@@ -1,0 +1,144 @@
+---
+title: "Other key life history traits from MPMs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Other key life history traits from MPMs}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+In addition to population growth rate and stable stage distributions, MPMs can be used to calculate a number of other important life history metrics. Many of these calculations are included as functions in the *Rage* package, but here we'll show you the underlying code for the calculations in R.
+
+## Preliminaries
+
+For this exercise, we'll use the *MASS* and *popbio* packages. We'll reference the *Rage* package, which is in progress and will likely be released before summer 2021.
+
+```{r}
+library(MASS)
+library(popbio)
+```
+
+## Other key life history traits from MPMs
+
+We will start by writing a function to calculate life history traits from a matrix. Specifically, the traits we will examine are the probability of surviving to first reproductive event, age at maturity, and reproductive lifespan. This code is primarily adapted from **matlab** code from Hal Caswell’s textbook on matrix population models (Caswell 2001).
+
+```{r}
+lifeTimeRepEvents <- function(matU, matF, startLife = 1) {
+  
+  uDim = dim(matU)[1]
+  surv = colSums(matU)
+  repLifeStages = colSums(matF)
+  repLifeStages[which(repLifeStages>0)] <- 1
+  
+  if(missing(matF) | missing(matU)) {stop('matU or matF missing')}
+  if(sum(matF, na.rm=T)==0) {stop('matF contains only 0 values')}
+  
+  # Probability of survival to first reprod event
+    Uprime <- matU
+    Uprime[, which(repLifeStages==1)] <- 0
+    Mprime = matrix(0,2,uDim)
+    for (p in 1:uDim[1]) {
+      if (repLifeStages[p]==1) {Mprime[2,p] = 1} else {
+        Mprime[1,p] = 1-surv[p]
+      }
+    }
+    Bprime = Mprime%*%(ginv(diag(uDim)-Uprime))
+    pRep = Bprime[2,startLife]
+    
+    out = data.frame(pRep = pRep)
+  
+  # Age at first reproduction (La; Caswell 2001, p 124)
+    D = diag(c(Bprime[2,]))
+    Uprimecond = D%*%Uprime%*%ginv(D)
+    expTimeReprod = colSums(ginv(diag(uDim)-Uprimecond))
+    La = expTimeReprod[startLife]
+    
+    out$La = La
+
+  # Mean life expectancy conditional on 
+    # entering the life cycle in the first reproductive stage
+  firstRepLifeStage = min(which(repLifeStages==1))
+    N = solve(diag(uDim[1])-matU)
+    meanRepLifeExpectancy = colSums(N)[firstRepLifeStage]
+    
+    out$meanRepLifeExpectancy = meanRepLifeExpectancy
+  
+  # Life expectancy from mean maturity
+  remainingMatureLifeExpectancy = colSums(N)[startLife]-La
+    
+  out$remainingMatureLifeExpectancy = remainingMatureLifeExpectancy
+    
+    return(out)
+}
+
+```
+
+You can refer to the documentation for the `lifeTimeRepEvents` function in the Rage package to better understand all of the arguments, inputs, and outputs of this function **here**.
+
+At this point, we can either choose a matrix from COMPADRE/COMADRE or create our own matrix model. Here, we create a matrix where
+
+1. Individuals can grow, shrink, and stay the same size
+2. Individuals can reproduce sexually
+3. The population has a seedbank as its first stage
+
+The matrix model will comprise two component matrices. The **U** matrix contains the survival-dependent processes or transitions. We will check the stage-specific survival rates, which cannot be > 1, by summing the columns in the **U** matrix. The **F** matrix contains the sexual reproduction rates, and the full (**A**) matrix is the sum of the **U** and **F** matrices (assuming no clonal reproduction for this population).
+
+```{r}
+matU <- matrix(c(0.1,0.1,0.3,0.1,0.3,0.3,0.1,0.2,0.3,0.3,0.2,0.2,0,0.2,0.3,0.2),
+               nrow = 4, ncol = 4, byrow = T)
+
+colSums(matU) # No column can be > 1
+
+matF <- matrix(c(0,0.3,40,30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+               nrow = 4, ncol = 4, byrow = T)
+
+matA <- matU + matF
+```
+
+Let's start calculating life history traits using the matrix model. First, we'll take a quick look at the overall population dynamics based on the matrix using the `eigen.analysis` function from the *popbio* package. Then, we'll calculate the fundamental matrix, **N**, which gives the residence time of individuals in each of the stages and transitions. Summing each column in matrix **N** gives the mean life expectancy conditional on entering the life cycle in each of the stages.
+
+```{r}
+dyn <- eigen.analysis(matA)
+dyn$lambda1
+
+dyn$stable.stage
+
+dyn$repro.value
+
+N <- solve(diag(dim(matU)[1])-matU)
+N
+
+colSums(N)
+```
+
+Generation time (**T**) is calculated using the net reproductive rate (**Ro**) and lambda.
+
+```{r}
+R <- matF %*% N
+Ro <- lambda(R)
+lambda <- lambda(matA)
+generation.time <- log(Ro)/log(lambda)
+
+Ro
+
+generation.time
+```
+
+Finally, we'll use the function that we created above to estimate other life history traits. Here, we specify the option `startLife = 2` because in our matrix model the first stage is for the seedbank, and typically in plant demographics, life starts after germination.
+
+```{r}
+lifeTimeRepEvents(matU, matF, startLife = 2)
+```
+
+**Extra:** Try changing this option to `startLife = 1` to see what happens. Why do the results change, and what do the changes mean biologically?

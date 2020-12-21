@@ -1,0 +1,146 @@
+---
+title: "Additional Rcompadre Exercises"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Additional Rcompadre Exercises}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+These exercises accompany *Rcompadre* package vinettes found here. We will use the *Rcompadre* package for the following items.
+
+1. Simple outputs from many matrices
+      * Calculate population growth rate and damping ratio for COMPADRE/COMADRE data
+2. Geographic distribution 
+      * Plot a subset of COMPADRE/COMADRE data on a map
+
+## Preliminaries
+
+For these exercises, we'll use the *Rcompadre*, *popbio*, and *maps* packages. The packages *popbio* and *maps* are available throught CRAN. Instructions for *Rcompadre* installation can be found **here**.
+
+```{r}
+library(Rcompadre)
+library(popbio)
+library(maps)
+```
+
+## Simple outputs from many matrices
+
+This example produces some basic outputs such as the population growth rate (λ) and damping ratio (Caswell 2001) for a subset of species and populations given some selection criteria.
+
+Begin by loading the COMADRE database. The latest version can be found **here** or pulled using the *Rcompadre* package with the code below.
+
+```{r}
+load("COMADRE_v.4.20.11.1.RData")
+```
+**Important note:** If using the `cdb_fetch` function, the database is automatically converted to an S4 object.
+
+Once the database is loaded, we'll use `as_cdb` (from the *Rcompadre* package) to make the loaded database into an S4 COMPADRE object. Then, we'll subset the database to our data of interest: only mean matrices for bony fish from studies of 3 years in duration or longer, and with a matrix dimension of 3 or greater.
+
+```{r}
+comadre <- as_cdb(comadre) # Converts the S3 database format from the website into S4
+
+x <- subset(comadre, MatrixComposite == "Mean" & # Subsets the database based on variables in the metadata
+              Class == "Actinopterygii" & 
+              StudyDuration >= 3 &
+              MatrixDimension > 3)
+```
+
+The object `x` is now a version of the COMADRE database object that contains only the matrices that match the search criteria.
+
+These matrices can now be analyzed by applying functions in a loop, or by using `lapply`. For example, to calculate population growth rate and damping ratio for the subset of matrices, first create an empty `data.frame` to accommodate the output using *popbio*.
+
+```{r}
+output <- data.frame(lambdas = rep(NA, length(x$mat)), damps = rep(NA, length(x$mat)))
+for (i in 1:length(x$mat)){
+  output$lambdas[i] <- Re(eigen(x$mat[[i]]@matA)$value)[1]
+  output$damps[i] <- damping.ratio(x$mat[[i]]@matA)
+}
+```
+
+Let's examine the output.
+
+```{r}
+output
+```
+
+These parameters are presented in the same order as the metadata so we could also add the species name to this data.frame.
+
+```{r}
+data.frame(Species = x@data$SpeciesAccepted, output)
+```
+
+We can also plot the population growth rates and damping ratios derived from these matrices. In the plot below, the vertical, dashed red line indicates population growth rate = 1 (or log(λ) = 0).
+
+
+```{r, fig.width = 6, fig.height = 4}
+par(mfrow = c(1,2))
+  hist(log(output$lambdas),xlab = "Log population growth rate", col = "gold", main = "")
+  abline(v=0,col = "red", lwd = 4, lty = 3)
+  hist(output$damps, xlab = "Damping ratio", col = "brown", main = "")
+```
+
+## Geographic distribution
+
+This example produces on a world map with the viability (population growth rate λ > 1, λ = 1, λ < 1) of a subset of studied populations given some selection criteria and color-codes the location of each population according to the value of λ.
+
+First, we'll subset mean matrices for all Carnivora in the wild in the northern hemisphere, with no issues for survival > 1, for which matrices have been split into **A** = **U** + **F** + **C**, and for which reproduction was explicitly modeled.
+
+```{r}
+x <- subset(comadre, MatrixComposite == "Mean" &
+              Order == "Carnivora" &
+              MatrixCaptivity == "W" &
+              Lat > 0 &
+              SurvivalIssue < 1 &
+              MatrixSplit == "Divided" &
+              MatrixFec == "Yes")
+```
+
+The object `x` is now a version of the COMADRE database object that contains only the matrices that match the search criteria. To calculate population growth rate for the subset matrices, we'll first create an empty variable to accommodate the output from lambda calculations.
+
+```{r}
+x@data$lambdas <- NA
+```
+
+Then, we'll create a `for` loop to examine each matrix in turn. Here, it may be advisable to use the function `tryCatch` as a wrapper to cope with the situation if/when the function in the loop fails.
+
+```{r}
+for (i in 1:length(x$mat)){
+  tryCatch({
+    x@data$lambdas[i] <- Re(eigen(x$mat[[i]]@matA)$value)[1]
+    }, error = function(e){})
+}
+```
+
+Now, we'll create a vector of color hex codes that can be applied according to the estimate of λ. This is done using the `colorRampPalette` function to go from green for high values of λ to red for low values of λ. Here, paste is used to append a value of 90 to the hex codes to allow transparency for aesthetic reasons.
+
+```{r}
+rampfunc <- colorRampPalette(c("green", "red"))
+colVect <- rampfunc(100)
+colVect <- paste(colVect, "90", sep = "")
+s1 <- seq(min(x@data$lambdas, na.rm=TRUE),max(x@data$lambdas, na.rm=TRUE),
+          length.out = 100)
+```
+
+Using the *maps* package, we'll plot the world map and overlay the points from our data, color coded by value of λ. In this case, the points are jittered slightly to improve visibility
+of nearby populations.
+
+```{r, fig.width = 7, fig.height = 5}
+par(mfrow = c(1,1))
+{map("world", col = "gray", fill = TRUE, bg = "light blue",
+    xlim = c(-175, 176), ylim = c(-60, 85), border = "white")
+points(jitter(x@data$Lon, 0.6), jitter(x@data$Lat, 0.6),
+       col = colVect[findInterval(x@data$lambdas, s1)], cex = 2, pch = 16)
+}
+```

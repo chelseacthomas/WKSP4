@@ -1,0 +1,27 @@
+{
+    "id": "D87035AC",
+    "path": "~/GitHub/WKSP4/vignettes/AdditionalRcompadreExercises.Rmd",
+    "project_path": "vignettes/AdditionalRcompadreExercises.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1608574239252.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "tempName": "Untitled1",
+        "cursorPosition": "84,0",
+        "scrollLine": "67",
+        "last_setup_crc32": "3DB35F599990457b",
+        "chunk_output_type": "console"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1608583943,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1608583943414,
+    "read_only": false,
+    "read_only_alternatives": []
+}

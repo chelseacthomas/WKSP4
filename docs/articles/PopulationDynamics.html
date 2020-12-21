@@ -54,7 +54,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/AdditionalRcompadreExercises.html">Additional Rcompadre Exercises</a>
+    </li>
+    <li>
+      <a href="../articles/OtherKeyLHTraits.html">Other key life history traits from MPMs</a>
+    </li>
+    <li>
       <a href="../articles/PopulationDynamics.html">Population dynamics</a>
+    </li>
+    <li>
+      <a href="../articles/SensitivityElasticity.html">Sensitivity and elasticity matrices</a>
     </li>
   </ul>
 </li>
@@ -85,7 +94,21 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>The following exercises will focus on how to calculate population dynamics using the <em>popdemo</em> package in R. We will work on: 1. Deterministic models 2. Asymptotic dynamics + Calculate asymptotic growth, stable demographic distribution, and reproductive value 3. Transient dynamics + Calculate damping ration, amplification and attenuation 4. Stochastic dynamics</p>
+<p>The following exercises will focus on how to calculate population dynamics using the <em>popdemo</em> package in R. We will work on:</p>
+<ol style="list-style-type: decimal">
+<li>Deterministic models</li>
+<li>Asymptotic dynamics
+<ul>
+<li>Calculate asymptotic growth, stable demographic distribution, and reproductive value</li>
+</ul>
+</li>
+<li>Transient dynamics
+<ul>
+<li>Calculate damping ration, amplification and attenuation</li>
+</ul>
+</li>
+<li>Stochastic dynamics</li>
+</ol>
 </div>
 <div id="preliminaries" class="section level2">
 <h2 class="hasAnchor">
@@ -136,31 +159,153 @@
 <span class="va">Tortp</span>
 <span class="co">#&gt; 1 deterministic population projection over 50 time intervals.</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;  [1] 1.0000000 1.4586846 1.7309007 1.8783892 1.9405660 1.9438197 1.9060473</span>
-<span class="co">#&gt;  [8] 1.8404711 1.7575778 1.6658102 1.5717324 1.4800983 1.3939966 1.3150953</span>
-<span class="co">#&gt; [15] 1.2439494 1.1803209 1.1234740 1.0724206 1.0261060 0.9835365 0.9438547</span>
-<span class="co">#&gt; [22] 0.9063745 0.8705849 0.8361345 0.8028051 0.7704803 0.7391157 0.7087115</span>
-<span class="co">#&gt; [29] 0.6792913 0.6508858 0.6235218 0.5972160 0.5719724 0.5477817 0.5246231</span>
-<span class="co">#&gt; [36] 0.5024663 0.4812746 0.4610069 0.4416205 0.4230726 0.4053215 0.3883278</span>
-<span class="co">#&gt; [43] 0.3720543 0.3564667 0.3415332 0.3272245 0.3135131 0.3003737 0.2877824</span>
-<span class="co">#&gt; [50] 0.2757165 0.2641545</span></code></pre></div>
+<span class="co">#&gt;  [1] 1.0000000 1.3414329 1.5730979 1.7228448 1.8071117 1.8386331 1.8282053</span>
+<span class="co">#&gt;  [8] 1.7858563 1.7210223 1.6422158 1.5566242 1.4698610 1.3859253 1.3073359</span>
+<span class="co">#&gt; [15] 1.2353755 1.1703830 1.1120444 1.0596501 1.0123041 0.9690778 0.9291126</span>
+<span class="co">#&gt; [22] 0.8916789 0.8561998 0.8222513 0.7895454 0.7579061 0.7272417 0.6975187</span>
+<span class="co">#&gt; [29] 0.6687387 0.6409210 0.6140888 0.5882608 0.5634460 0.5396424 0.5168363</span>
+<span class="co">#&gt; [36] 0.4950047 0.4741166 0.4541360 0.4350236 0.4167392 0.3992426 0.3824953</span>
+<span class="co">#&gt; [43] 0.3664605 0.3511039 0.3363936 0.3223002 0.3087961 0.2958558 0.2834555</span>
+<span class="co">#&gt; [50] 0.2715727 0.2601859</span></code></pre></div>
 <p>The <code>project</code> function above returns an object containing the overall population size over time.</p>
 <p>This object also contains the population vectors of each timestep (the stage or age specific numbers). Rows represent one timestep and each column represents a stage.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/Projection-class.html">vec</a></span><span class="op">(</span><span class="va">Tortp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span> <span class="co"># Here, we've limited the display to rows 1-3</span>
-<span class="co">#&gt;             Yr         J1         J2         I1         I2         SA        A1</span>
-<span class="co">#&gt; [1,] 0.2324130 0.03287555 0.13443092 0.18314295 0.07793143 0.07133744 0.2058418</span>
-<span class="co">#&gt; [2,] 0.6597145 0.18504816 0.08112079 0.13064855 0.08668019 0.06590135 0.1929344</span>
-<span class="co">#&gt; [3,] 0.6132379 0.57727791 0.07356766 0.09099872 0.07924332 0.06418416 0.1805966</span>
+<span class="co">#&gt;             Yr        J1         J2         I1        I2         SA        A1</span>
+<span class="co">#&gt; [1,] 0.1612628 0.1610072 0.03638508 0.18694399 0.1563224 0.08755404 0.1921181</span>
+<span class="co">#&gt; [2,] 0.5415183 0.2067553 0.04462042 0.11833555 0.1314724 0.09453419 0.1852935</span>
+<span class="co">#&gt; [3,] 0.5383570 0.5049573 0.05610631 0.07812311 0.1014334 0.09367547 0.1812237</span>
 <span class="co">#&gt;              A2</span>
-<span class="co">#&gt; [1,] 0.06202690</span>
-<span class="co">#&gt; [2,] 0.05663661</span>
-<span class="co">#&gt; [3,] 0.05179443</span></code></pre></div>
+<span class="co">#&gt; [1,] 0.01840630</span>
+<span class="co">#&gt; [2,] 0.01890331</span>
+<span class="co">#&gt; [3,] 0.01922154</span></code></pre></div>
 <p>Now, let’s plot the projected population.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Tortp</span>, log <span class="op">=</span><span class="st">"y"</span><span class="op">)</span></code></pre></div>
 <p><img src="PopulationDynamics_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 <p><strong>Extra:</strong> Play around with the amount of time to which the model is projected (<code>time</code> argument above) and with your initial vector (<code>vec</code> argument above). What changes do you see (remember asymptotic vs. transient dymanics)?</p>
+</div>
+<div id="asymptotic-dynamics" class="section level2">
+<h2 class="hasAnchor">
+<a href="#asymptotic-dynamics" class="anchor"></a>Asymptotic dynamics</h2>
+<p>In the long term, a population will reach a stable state and exhibit asymptotic growth. There are three major measures of asymptotic dynamics and are described by the dominant eigen data of the matrix:</p>
+<ol style="list-style-type: decimal">
+<li>Lambda; dominant eigenvalue: Asymptotic population growth rate</li>
+<li>w; dominant right eigenvector: Proportion of individuals in each life stage when in a stable demographic distribution</li>
+<li>v; dominant left eigenvector: Reproductive value vector</li>
+</ol>
+<p>We can calculate these three parameters in the following way:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/eigs.html">eigs</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="st">"all"</span><span class="op">)</span>
+<span class="co">#&gt; $lambda</span>
+<span class="co">#&gt; [1] 0.9580592</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $ss</span>
+<span class="co">#&gt; [1] 0.22166176 0.40584601 0.15463401 0.06507518 0.03841807 0.03086514 0.07178663</span>
+<span class="co">#&gt; [8] 0.01171319</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $rv</span>
+<span class="co">#&gt; [1] 0.1954968 0.2615887 0.6865549 1.8019036 2.7148109 4.8029132 4.3813423</span>
+<span class="co">#&gt; [8] 5.1237087</span></code></pre></div>
+<p>The <em>ss</em> vector refers to <strong>w</strong> and <em>rv</em> to <strong>v</strong>.</p>
+<p><strong>w:</strong> The vector with the proportion of individuals in each stage once the population reaches a stable state. This vector can help us project a population that has theoretically reached stability. Lets project the tortoise population matrix with this vector (w).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">Tortw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/eigs.html">eigs</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="st">"ss"</span><span class="op">)</span>
+<span class="va">Tortpw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/project.html">project</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="va">Tortw</span>, time <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
+<p>We can plot the projected population and compare a population that has the actual ratios of the life stages (our random initial vector) with a population that has reached stability.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Tortp</span>, log <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">50</span>, <span class="va">Tortpw</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># This line adds to the plot our recently projected population with the stable ratios</span></code></pre></div>
+<p><img src="PopulationDynamics_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
+</div>
+<div id="transient-dynamics" class="section level2">
+<h2 class="hasAnchor">
+<a href="#transient-dynamics" class="anchor"></a>Transient dynamics</h2>
+<p>Before a population reaches a stable state it goes through a series of oscillations, i.e., it declines/grows at a faster/slower rate than the asymptotic growth. These are called transient dynamics. These dynamics are harder to characterize as they are sensitive to the initial demographic distribution.</p>
+<p>Let’s start with standardizations. To calculate deviations from stable growth, it is necessary to standardize the data. For comparative analyses, we often standardize for overall population size (because sizes of different populations in our dataset may vary) and measure transient dynamics relative to asymptotic growth (because different populations, with different matrices, have different growth rates).</p>
+<p>The package <em>popdemo</em> has two different standardizations:</p>
+<ol style="list-style-type: decimal">
+<li>Standardize the initial vector so that it sums to 1
+<ul>
+<li>This is useful to assess the projection relative to initial population size (<code>standard.vec</code>)</li>
+</ul>
+</li>
+<li>Scale the projection matrix by lambda
+<ul>
+<li>This standardizes asymptotic dynamics and makes it possible to asses transient dynamics</li>
+</ul>
+</li>
+</ol>
+<p>We can plot these standadizations.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">Tortps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/project.html">project</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="va">vec</span>, time <span class="op">=</span> <span class="fl">50</span>, 
+                  standard.A <span class="op">=</span> <span class="cn">TRUE</span>, standard.vec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">Tortpws</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/project.html">project</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="va">Tortw</span>, time <span class="op">=</span> <span class="fl">50</span>, 
+                   standard.A <span class="op">=</span> <span class="cn">TRUE</span>, standard.vec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Tortps</span>, log <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">Tortpws</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="PopulationDynamics_files/figure-html/unnamed-chunk-10-1.png" width="576"></p>
+</div>
+<div id="damping-ratio" class="section level2">
+<h2 class="hasAnchor">
+<a href="#damping-ratio" class="anchor"></a>Damping ratio</h2>
+<p>This is the rate of convergence to a stable state. The damping ratio does not tells us the time it will take a population to converge, but rather how fast. The higher the damping ratio, the faster it reaches convergence.</p>
+<p>Calculate the damping ratio for the tortoise population.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/dr.html">dr</a></span><span class="op">(</span><span class="va">Tort</span><span class="op">)</span>
+<span class="co">#&gt; [1] 1.141954</span></code></pre></div>
+</div>
+<div id="transient-indices" class="section level2">
+<h2 class="hasAnchor">
+<a href="#transient-indices" class="anchor"></a>Transient indices</h2>
+<p>These are the maximum amplification and attenuation.</p>
+<p>Comparable points at which to measure transient dynamics don’t have to be at the same time of the projection. Maximum amplification and maximum attenuation describe the largest and smallest population sizes (relative to long-term growth λ). Maximum amplification and maximum attenuation can occur at any point along the projection. Some populations only have a maximum amplification (because they never attenuate), some only have a maximum attenuation (because they never amplify), and some have both.</p>
+<p>If we want to compare several different population structures, then it’s possible to project several simultaneously.</p>
+<p>Here, we will: * Create two extra vectors * One that amplifies and one that attenuates * Bind these with the random vector into a matrix with 3 columns * Project the model with this matrix passed to the <code>vec</code> argument * Calculate maximum amplification and attenuation for the extra vectors * Plot these on the graph</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># We'll start by creating three example populations</span>
+<span class="va">TortAMP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">13</span>, <span class="fl">21</span><span class="op">)</span> <span class="co"># A population that amplifies</span>
+<span class="va">TortATT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">13</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span> <span class="co"># A population that attenuates</span>
+<span class="va">TortBTH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># A population that does both</span>
+
+<span class="co"># Next, we'll bind them together</span>
+<span class="va">Tortvec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span>AMP <span class="op">=</span> <span class="va">TortAMP</span>, ATT <span class="op">=</span> <span class="va">TortATT</span>, BTH <span class="op">=</span> <span class="va">TortBTH</span><span class="op">)</span>
+
+<span class="va">Tortvec3</span>
+<span class="co">#&gt;      AMP ATT BTH</span>
+<span class="co">#&gt; [1,]   1  21   0</span>
+<span class="co">#&gt; [2,]   1  13   0</span>
+<span class="co">#&gt; [3,]   2   8   0</span>
+<span class="co">#&gt; [4,]   3   5   1</span>
+<span class="co">#&gt; [5,]   5   3   0</span>
+<span class="co">#&gt; [6,]   8   2   0</span>
+<span class="co">#&gt; [7,]  13   1   0</span>
+<span class="co">#&gt; [8,]  21   1   0</span>
+
+<span class="co"># Let's project to 50 time intervals and standardize the vector to sum to 1 as we did in the earlier example</span>
+<span class="va">Tortp3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/project.html">project</a></span><span class="op">(</span><span class="va">Tort</span>, <span class="va">Tortvec3</span>, time <span class="op">=</span> <span class="fl">50</span>, 
+                  standard.A <span class="op">=</span> <span class="cn">TRUE</span>, standard.vec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="co"># Now, we'll define the points for amplification and attenuation</span>
+<span class="va">max3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">Tortvec3</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, <span class="fl">2</span>, <span class="va">maxamp</span>, A <span class="op">=</span> <span class="va">Tort</span><span class="op">)</span>
+
+<span class="va">max3t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">Tortvec3</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/maxamp.html">maxamp</a></span><span class="op">(</span>vector <span class="op">=</span> <span class="va">x</span>, A <span class="op">=</span> <span class="va">Tort</span>, return.t <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">t</span><span class="op">}</span><span class="op">)</span>
+
+<span class="va">min3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">Tortvec3</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, <span class="fl">2</span>, <span class="va">maxatt</span>, A <span class="op">=</span> <span class="va">Tort</span><span class="op">)</span>
+
+<span class="va">min3t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">Tortvec3</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/popdemo/man/maxatt.html">maxatt</a></span><span class="op">(</span>vector <span class="op">=</span> <span class="va">x</span>, A <span class="op">=</span> <span class="va">Tort</span>, return.t <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span><span class="op">$</span><span class="va">t</span><span class="op">}</span><span class="op">)</span>
+
+<span class="co"># And finally, let's plot</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Tortp3</span>, log <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">Tortpws</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">max3t</span>, <span class="va">min3t</span><span class="op">)</span>,
+       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">max3</span>, <span class="va">min3</span><span class="op">)</span>,
+       pch <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
+<p><img src="PopulationDynamics_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
 </div>
   </div>
 

@@ -1,0 +1,26 @@
+{
+    "id": "23ECFA3C",
+    "path": "~/GitHub/WKSP4/vignettes/SensitivityElasticity.Rmd",
+    "project_path": "vignettes/SensitivityElasticity.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1608585688239.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "tempName": "Untitled1",
+        "cursorPosition": "116,37",
+        "scrollLine": "97",
+        "chunk_output_type": "console"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1608587143,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1608587143604,
+    "read_only": false,
+    "read_only_alternatives": []
+}

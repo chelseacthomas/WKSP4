@@ -1,0 +1,25 @@
+{
+    "id": "0EE8DA15",
+    "path": "~/GitHub/WKSP4/vignettes/PopulationDynamics.Rmd",
+    "project_path": "vignettes/PopulationDynamics.Rmd",
+    "type": "r_markdown",
+    "hash": "1798255459",
+    "contents": "",
+    "dirty": false,
+    "created": 1608571310133.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "chunk_output_type": "console",
+        "cursorPosition": "173,36",
+        "scrollLine": "166"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1608587249,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1608587249602,
+    "read_only": false,
+    "read_only_alternatives": []
+}

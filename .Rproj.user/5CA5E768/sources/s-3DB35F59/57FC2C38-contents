@@ -1,0 +1,91 @@
+---
+title: "Population dynamics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Population dynamics}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The following exercises will focus on how to calculate population dynamics using the *popdemo* package in R. We will work on:
+
+1. Deterministic models
+2. Asymptotic dynamics 
+  i) Calculate asymptotic growth, stable demographic distribution, and reproductive value
+3. Transient dynamics 
+  i) Calculate damping ration, amplification and attenuation
+4. Stochastic dynamics
+
+## Preliminaries
+
+We'll start by loading the *popdemo* package.
+
+```{r}
+library(popdemo) # Activates the package once installed in your library
+```
+
+## Deterministic models
+
+Deterministic models are those that have no density-dependence and the population matrix is constant (i.e., vital rates do not change overtime (timestep to timestep)).
+
+For this exercise, we will use the population matrix from the desert tortoise *Gopherus agassizzii* (See Doak et al. (1994) Ecol. Appl., 4, 446-460). This population is found in the Mojave Desert, USA. The matrix has 8 age and size-based stages.
+
+* Yearling (age 0-1)
+* Juvenile 1 (<60 mm)
+* Juvenile 2 (90-99mm)
+* Immature 1 (100-139mm)
+* Immature 2 (140-179mm)
+* Subadult (180-207mm)
+* Adult 1 (208-239mm)
+* Adult 2 (>240mm)
+
+Let's add the data.
+
+```{r}
+data(Tort)
+Tort
+```
+
+What can you tell about the tortoise population from this matrix?
+
+We will use the function `project` to obtain the population projection of the desert tortoise over a number of timesteps. We will use one matrix containing a constant set of vital rates (i.e., a deterministic model). Remember that projected population dynamics (time series of population size and structure over time) are obtained by multiplying the constant matrix with the initial population vector. First, we will chose a vector at random.
+
+```{r}
+vec <- runif(8)
+```
+
+Now we will project to 50 time intervals and standardize the vector to sum to 1 with the argument `standard.vec`.
+
+```{r}
+Tortp <- project(Tort, vec, time = 50, standard.vec = TRUE)
+Tortp
+```
+
+The `project` function above returns an object containing the overall population size over time.
+
+This object also contains the population vectors of each timestep (the stage or age specific numbers). Rows represent one timestep and each column represents a stage.
+
+```{r}
+vec(Tortp)[1:3,] # Here, we've limited the display to rows 1-3
+```
+
+Now, let's plot the projected population.
+
+```{r, fig.width = 6, fig.height = 4}
+plot(Tortp, log ="y")
+```
+
+**Extra:** Play around with the amount of time to which the model is projected (`time` argument above) and with your initial vector (`vec` argument above). What changes do you see (remember asymptotic vs. transient dymanics)?
+
+

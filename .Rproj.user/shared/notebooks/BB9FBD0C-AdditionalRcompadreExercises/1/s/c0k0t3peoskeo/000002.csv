@@ -1,0 +1,4 @@
+"0","comadre <- as_cdb(comadre) # Converts the S3 database format from the website into S4
+"
+"2","Error in as_cdb(comadre) : could not find function ""as_cdb""
+"
