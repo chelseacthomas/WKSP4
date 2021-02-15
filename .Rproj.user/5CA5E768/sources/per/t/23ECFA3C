@@ -3,7 +3,7 @@
     "path": "~/GitHub/WKSP4/vignettes/SensitivityElasticity.Rmd",
     "project_path": "vignettes/SensitivityElasticity.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "168493574",
     "contents": "",
     "dirty": false,
     "created": 1608585688239.0,
@@ -11,8 +11,8 @@
     "relative_order": 4,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "116,37",
-        "scrollLine": "97",
+        "cursorPosition": "90,6",
+        "scrollLine": "90",
         "chunk_output_type": "console"
     },
     "folds": "",
